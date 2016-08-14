@@ -1,0 +1,4 @@
+timetravel:
+  build: .
+  volumes:
+    - .:/source/
