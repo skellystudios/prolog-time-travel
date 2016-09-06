@@ -1,5 +1,6 @@
 % We want this to get all_different
 :- use_module(library(clpfd)).
+:- use_module(library(lists)).
 :- dynamic switch_off_lights/1, switch_on_lights/1, teleport_to/1.
 
 %%%%%%%%%%%%%%%%%%%%
@@ -29,7 +30,7 @@ t(6).
 % Define actions
 action(switch_on_lights(T)) :- t(T).
 action(switch_off_lights(T)) :- t(T).
-% action(teleport_to(T)) :- t(T).
+action(teleport_to(T)) :- t(T).
 
 
 %%%%%%%%%%%%%%%%
@@ -80,17 +81,38 @@ holds_after(_, [A|_]) :-
 is_safe(Action) :-
   action(Action),
   holds_after(safe,[Action]).
+is_safe(A,B) :-
+  holds_after(safe,[A,B]),
+  is_set([A,B]).
 is_safe(A,B,C,D,E) :-
   holds_after(safe,[A,B,C,D,E]),
-  all_different([A,B,C,D,E]),
-  valid_actions([A,B,C,D,E], 1).
+  is_set([A,B,C,D,E])
+  .
+  % valid_actions([A,B,C,D,E], 1).
 
-valid_actions([teleport_to(NewTime)|AS], _) :-
-  valid_actions(AS, NewTime).
+
+% This needs to be improved.
 valid_actions([], _) :-
   true.
-valid_actions([A|AS], CurrentTime) :-
+valid_actions([A], _) :-
+  action(A),
+  t(NewTime),
+  A == teleport_to(NewTime).
+valid_actions([A], CurrentTime) :-
   action(A),
   arg(1, A, Time),
+  Time == CurrentTime.
+valid_actions([A|AS], _) :-
+  action(A),
+  t(NewTime),
+  A == teleport_to(NewTime),
+  is_set(AS),
+  valid_actions(AS, NewTime),
+  is_set([A|AS]).
+valid_actions([A|AS], CurrentTime) :-
+  action(A),
+  is_set(AS),
+  arg(1, A, Time),
   Time == CurrentTime,
-  valid_actions(AS, CurrentTime).
+  valid_actions(AS, CurrentTime),
+  is_set([A|AS]).
