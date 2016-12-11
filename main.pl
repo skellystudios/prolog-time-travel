@@ -85,34 +85,41 @@ is_safe(A,B) :-
   holds_after(safe,[A,B]),
   is_set([A,B]).
 is_safe(A,B,C,D,E) :-
-  holds_after(safe,[A,B,C,D,E]),
-  is_set([A,B,C,D,E])
-  .
-  % valid_actions([A,B,C,D,E], 1).
+  holds_after(safe,[A,B ,C,D,E]),
+  is_set([A,B,C,D,E]),
+  valid_actions([A,B,C,D,E], 1, 5).
 
 
-% This needs to be improved.
-valid_actions([], _) :-
+% valid_actions takes a list of actions and a starting time and returns if that's
+% a valid list of actions. This code needs to be improved.
+%
+% No actions are valid from any time
+valid_actions([], _, 0) :-
   true.
-valid_actions([A], _) :-
+% The "teleport to" action is valid at any time
+valid_actions([A], _, 1) :-
   action(A),
   t(NewTime),
   A == teleport_to(NewTime).
-valid_actions([A], CurrentTime) :-
+% Any single action taking place at the current time
+valid_actions([A], CurrentTime, 1) :-
   action(A),
+  % set Time to the 1st argument of A
   arg(1, A, Time),
   Time == CurrentTime.
-valid_actions([A|AS], _) :-
+valid_actions([A|AS], _, N) :-
+  N > 1,
   action(A),
   t(NewTime),
   A == teleport_to(NewTime),
-  is_set(AS),
-  valid_actions(AS, NewTime),
+  Nm1 is N-1,
+  valid_actions(AS, NewTime, Nm1),
   is_set([A|AS]).
-valid_actions([A|AS], CurrentTime) :-
+valid_actions([A|AS], CurrentTime, N) :-
+  N > 1,
   action(A),
-  is_set(AS),
   arg(1, A, Time),
   Time == CurrentTime,
-  valid_actions(AS, CurrentTime),
+  Nm1 is N-1,
+  valid_actions(AS, CurrentTime, Nm1),
   is_set([A|AS]).
