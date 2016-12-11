@@ -11,6 +11,7 @@ shoots(assasin, 5).
 current_time(6).
 visited(6).
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Define what things are
 
@@ -27,6 +28,8 @@ t(4).
 t(5).
 t(6).
 
+room(hall).
+
 % Define actions
 action(switch_on_lights(T)) :- t(T).
 action(switch_off_lights(T)) :- t(T).
@@ -35,11 +38,11 @@ action(teleport_to(T)) :- t(T).
 
 %%%%%%%%%%%%%%%%
 % Action effects
-
-teleport_to(T) :-
-  retract(current_time(_)),
-  asserta(current_time(T)).
-
+%
+% teleport_to(T) :-
+%   retract(current_time(_)),
+%   asserta(current_time(T)).
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Production rules for the scenario
@@ -52,6 +55,7 @@ shot :-
   \+ dark(T).
 
 dark(T) :-
+  t(T),
   \+ lights_on(T).
 
 
@@ -78,17 +82,29 @@ holds_after(C, [A|AS]) :-
 holds_after(_, [A|_]) :-
   action(A), retract(A), fail.
 
-is_safe(Action) :-
-  action(Action),
-  holds_after(safe,[Action]).
-is_safe(A,B) :-
-  holds_after(safe,[A,B]),
-  is_set([A,B]).
-is_safe(A,B,C,D,E) :-
-  holds_after(safe,[A,B ,C,D,E]),
-  is_set([A,B,C,D,E]),
-  valid_actions([A,B,C,D,E], 1, 5).
+% Checks to see whether a condition is ever true
+holds_once(C, _) :-
+  C.
+holds_once(C, [A|AS]) :-
+  action(A), assert(A), holds_once(C, AS), retract(A).
+holds_once(_, [A|_]) :-
+  action(A), retract(A), fail.
 
+% is_safe(Action) :-
+%   action(Action),
+%   holds_after(safe,[Action]).
+% is_safe(A,B) :-
+%   holds_after(safe,[A,B]),
+%   is_set([A,B]).
+is_safe(A,B,C,D,E) :-
+  is_set([A,B,C,D,E]),
+  valid_actions([A,B,C,D,E], 1, 5),
+  holds_after(safe,[A,B,C,D,E]).
+is_safe(Actions, N) :-
+  valid_actions(Actions, 1, N),
+  length(Actions, N),
+  is_set(Actions),
+  holds_after(safe, Actions).
 
 % valid_actions takes a list of actions and a starting time and returns if that's
 % a valid list of actions. This code needs to be improved.
