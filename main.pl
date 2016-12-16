@@ -17,7 +17,7 @@ visited(6).
 
 % Actors
 actor(president).
-actor(assasin).
+actor(assassin).
 actor(me).
 
 % Times
@@ -35,6 +35,11 @@ action(switch_on_lights(T)) :- t(T).
 action(switch_off_lights(T)) :- t(T).
 action(teleport_to(T)) :- t(T).
 
+
+action(junk(T)) :- t(T).
+action(junk2(T)) :- t(T).
+action(junk3(T)) :- t(T).
+action(junk4(T)) :- t(T).
 
 %%%%%%%%%%%%%%%%
 % Action effects
