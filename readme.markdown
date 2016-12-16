@@ -8,3 +8,4 @@ The aim is to plug in a set of complex, intertwining rules and then have Prolog 
 Note to Me:
 - use `listing` to show currently asserted rules.
 - To clear any accidental assertions: `action(A), retract(A).`
+- You can use SWI-Prolog `make/0` predicate to reload all modified source files since last loaded.
