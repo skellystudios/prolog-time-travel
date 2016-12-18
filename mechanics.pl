@@ -1,6 +1,9 @@
 :- module(mechanics, [holds_after/2, is_safe/2, valid_actions/3, holds_after_actions/3, make_safe/0]).
 :- dynamic switch_off_lights/1, switch_on_lights/1, teleport_to/1.
 
+% So I think I might be able to stop doing all this asserting shit by
+% using dynamic modules http://www.swi-prolog.org/pldoc/man?section=dynamic-modules
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Holds after simulates doing hypothetical checks by asserting
 % facts into the database and user:retracting them afterwards.

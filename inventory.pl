@@ -22,9 +22,6 @@ room(hall).
 
 % Define actions
 
-
-
-
 action(switch_on_lights(T)) :- t(T).
 action(switch_off_lights(T)) :- t(T).
 action(teleport_to(T)) :- t(T).
